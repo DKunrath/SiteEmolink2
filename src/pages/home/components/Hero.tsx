@@ -46,7 +46,7 @@ export default function Hero() {
         setShowModal(false);
         const videoSection = document.querySelector('section.py-20.px-4.bg-gradient-to-b');
         videoSection?.scrollIntoView({ behavior: 'smooth' });
-      }, 3000);
+      }, 10000);
 
     } catch (error) {
       console.error('Erro ao enviar email:', error);
