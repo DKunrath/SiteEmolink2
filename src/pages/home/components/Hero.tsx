@@ -1,11 +1,27 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Hero() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [showModal, setShowModal] = useState(false);
+  const [countdown, setCountdown] = useState(10);
+
+  // Timer para o modal
+  useEffect(() => {
+    if (showModal && countdown > 0) {
+      const timer = setTimeout(() => {
+        setCountdown(countdown - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (showModal && countdown === 0) {
+      setShowModal(false);
+      const videoSection = document.querySelector('section.py-20.px-4.bg-gradient-to-b');
+      videoSection?.scrollIntoView({ behavior: 'smooth' });
+      setCountdown(10); // Reset para próxima vez
+    }
+  }, [showModal, countdown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,13 +56,7 @@ export default function Hero() {
       setSubmitStatus('success');
       setEmail('');
       setShowModal(true);
-      
-      // Scroll to video section após 3 segundos (tempo para ler o modal)
-      setTimeout(() => {
-        setShowModal(false);
-        const videoSection = document.querySelector('section.py-20.px-4.bg-gradient-to-b');
-        videoSection?.scrollIntoView({ behavior: 'smooth' });
-      }, 10000);
+      setCountdown(10); // Reinicia o contador
 
     } catch (error) {
       console.error('Erro ao enviar email:', error);
@@ -182,6 +192,13 @@ export default function Hero() {
               </p>
               <p className="text-lg text-purple-200 leading-relaxed">
                 Em breve você receberá um email com instruções de como acessar o app.
+              </p>
+            </div>
+
+            {/* Timer */}
+            <div className="text-center mb-6">
+              <p className="text-purple-300 text-sm">
+                Fechando em <span className="text-pink-400 font-bold text-2xl">{countdown}</span>
               </p>
             </div>
 
