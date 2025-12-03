@@ -5,6 +5,7 @@ export default function Hero() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [showModal, setShowModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,15 +26,27 @@ export default function Hero() {
         })
       });
 
+      // Tracking Facebook Pixel - Evento Padrão
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'AddToWishlist', {
+          content_name: 'Emolink - Teste Gratuito',
+          content_category: 'Lead',
+          value: 24.90,
+          currency: 'BRL'
+        });
+      }
+
       // Com no-cors, não conseguimos ler a resposta, mas se não deu erro, assumimos sucesso
       setSubmitStatus('success');
       setEmail('');
+      setShowModal(true);
       
-      // Scroll to video section após 1 segundo
+      // Scroll to video section após 3 segundos (tempo para ler o modal)
       setTimeout(() => {
+        setShowModal(false);
         const videoSection = document.querySelector('section.py-20.px-4.bg-gradient-to-b');
         videoSection?.scrollIntoView({ behavior: 'smooth' });
-      }, 1000);
+      }, 3000);
 
     } catch (error) {
       console.error('Erro ao enviar email:', error);
@@ -119,7 +132,7 @@ export default function Hero() {
               disabled={isSubmitting}
               className="px-8 py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-full hover:from-pink-600 hover:to-purple-700 transition-all duration-300 shadow-lg shadow-pink-500/50 whitespace-nowrap cursor-pointer text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Enviando...' : 'Experimente por 7 Dias'}
+              {isSubmitting ? 'Enviando...' : 'Quero Testar!'}
             </button>
           </form>
 
@@ -145,6 +158,42 @@ export default function Hero() {
 
       {/* Decorative Elements */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-950 to-transparent z-10"></div>
+
+      {/* Modal de Sucesso */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+          <div className="bg-gradient-to-br from-purple-900/95 to-pink-900/95 border-2 border-pink-400/50 rounded-3xl p-8 md:p-12 max-w-lg w-full shadow-2xl shadow-pink-500/50 animate-scale-in">
+            {/* Ícone de Sucesso */}
+            <div className="flex justify-center mb-6">
+              <div className="w-20 h-20 rounded-full bg-green-500/20 border-2 border-green-400 flex items-center justify-center">
+                <i className="ri-check-line text-5xl text-green-400"></i>
+              </div>
+            </div>
+
+            {/* Título */}
+            <h3 className="text-3xl font-bold text-white text-center mb-4">
+              Bem-vinda à Lista VIP! ✨
+            </h3>
+
+            {/* Mensagem */}
+            <div className="space-y-4 text-center mb-6">
+              <p className="text-xl text-pink-200 leading-relaxed">
+                Você foi adicionada à lista de usuárias que serão selecionadas para o <strong className="text-pink-300">teste inicial do Emolink</strong>!
+              </p>
+              <p className="text-lg text-purple-200 leading-relaxed">
+                Em breve você receberá um email com instruções de como acessar o app.
+              </p>
+            </div>
+
+            {/* Decoração */}
+            <div className="flex justify-center gap-2 text-pink-400">
+              <i className="ri-heart-3-fill text-2xl animate-pulse"></i>
+              <i className="ri-heart-3-fill text-2xl animate-pulse" style={{ animationDelay: '0.2s' }}></i>
+              <i className="ri-heart-3-fill text-2xl animate-pulse" style={{ animationDelay: '0.4s' }}></i>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

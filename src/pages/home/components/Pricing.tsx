@@ -82,8 +82,12 @@ export default function Pricing() {
           {/* CTA Button */}
           <button 
             onClick={() => {
-              const videoSection = document.querySelector('section.py-20.px-4.bg-gradient-to-b');
-              videoSection?.scrollIntoView({ behavior: 'smooth' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              // Destaca o input de email após scroll
+              setTimeout(() => {
+                const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+                emailInput?.focus();
+              }, 1000);
             }}
             className="w-full py-6 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-2xl font-bold rounded-full hover:from-pink-600 hover:to-purple-700 transition-all duration-300 shadow-xl shadow-pink-500/50 hover:shadow-2xl hover:shadow-pink-500/60 hover:scale-105 cursor-pointer whitespace-nowrap"
           >

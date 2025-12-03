@@ -48,8 +48,12 @@ export default function VideoSection() {
           </p>
           <button 
             onClick={() => {
-              const videoSection = document.querySelector('section.py-20.px-4.bg-gradient-to-b');
-              videoSection?.scrollIntoView({ behavior: 'smooth' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              // Destaca o input de email após scroll
+              setTimeout(() => {
+                const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+                emailInput?.focus();
+              }, 1000);
             }}
             className="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:from-pink-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl whitespace-nowrap cursor-pointer"
           >
