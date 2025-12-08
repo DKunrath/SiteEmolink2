@@ -520,8 +520,33 @@
         let currentUser = null;
         let allSteps = [];
 
+        // Credenciais de admin (temporário - substitua por variáveis de ambiente em produção)
+        const ADMIN_CREDENTIALS = {
+            email: 'anaclaudiacavalcanti.psi@gmail.com',
+            password: '18225252' // IMPORTANTE: Substitua pela senha real
+        };
+
+        // Auto-login para admins
+        async function autoLogin() {
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword(ADMIN_CREDENTIALS);
+                
+                if (error) {
+                    console.error('Erro no auto-login:', error);
+                    return false;
+                }
+                
+                currentUser = data.user;
+                return true;
+            } catch (err) {
+                console.error('Erro ao tentar auto-login:', err);
+                return false;
+            }
+        }
+
         // Inicialização
         async function init() {
+            // Primeiro tenta pegar sessão existente
             const { data: { session } } = await supabase.auth.getSession();
             
             if (session) {
@@ -529,7 +554,16 @@
                 renderApp();
                 loadSteps();
             } else {
-                renderLogin();
+                // Tenta auto-login
+                const loginSuccess = await autoLogin();
+                
+                if (loginSuccess) {
+                    renderApp();
+                    loadSteps();
+                } else {
+                    // Se falhar, mostra tela de login
+                    renderLogin();
+                }
             }
         }
 
@@ -766,19 +800,34 @@
 
             showLoading();
 
-            const { error } = await supabase
+            const updateData = {
+                title: formData.get('title'),
+                subtitle: formData.get('subtitle') || null,
+                button_text: formData.get('button_text') || null,
+            };
+
+            console.log('Salvando stepId:', stepId);
+            console.log('Dados:', updateData);
+
+            const { data, error } = await supabase
                 .from('onboarding_content')
-                .update({
-                    title: formData.get('title'),
-                    subtitle: formData.get('subtitle') || null,
-                    button_text: formData.get('button_text') || null,
-                })
-                .eq('id', stepId);
+                .update(updateData)
+                .eq('id', stepId)
+                .select();
 
             hideLoading();
 
+            console.log('Resposta do Supabase:', { data, error });
+
             if (error) {
+                console.error('Erro detalhado:', error);
                 showAlert('alert', 'Erro ao salvar: ' + error.message, 'error');
+                return;
+            }
+
+            if (!data || data.length === 0) {
+                console.warn('Nenhum registro atualizado!');
+                showAlert('alert', 'Aviso: Nenhum registro foi atualizado. Verifique se o ID está correto.', 'warning');
                 return;
             }
 

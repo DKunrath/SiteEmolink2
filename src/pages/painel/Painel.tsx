@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function Painel() {
   const navigate = useNavigate();
+  const [iframeKey, setIframeKey] = useState(0);
 
   useEffect(() => {
     // Verifica autenticação
@@ -16,6 +17,10 @@ export default function Painel() {
     sessionStorage.removeItem('authenticated');
     sessionStorage.removeItem('userEmail');
     navigate('/login');
+  };
+
+  const handleRefresh = () => {
+    setIframeKey(prev => prev + 1);
   };
 
   const userEmail = sessionStorage.getItem('userEmail');
@@ -34,23 +39,35 @@ export default function Painel() {
               <p className="text-sm text-purple-300">{userEmail}</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-6 py-2 bg-red-500/20 border border-red-400/30 text-red-300 rounded-lg hover:bg-red-500/30 transition-all duration-300"
-          >
-            <i className="ri-logout-box-line mr-2"></i>
-            Sair
-          </button>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleRefresh}
+              className="px-6 py-2 bg-purple-500/20 border border-purple-400/30 text-purple-300 rounded-lg hover:bg-purple-500/30 transition-all duration-300"
+              title="Recarregar painel"
+            >
+              <i className="ri-refresh-line mr-2"></i>
+              Recarregar
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-6 py-2 bg-red-500/20 border border-red-400/30 text-red-300 rounded-lg hover:bg-red-500/30 transition-all duration-300"
+            >
+              <i className="ri-logout-box-line mr-2"></i>
+              Sair
+            </button>
+          </div>
         </div>
       </header>
 
       {/* Content - Iframe do painel-onboarding.html */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 backdrop-blur-sm border-2 border-purple-500/30 rounded-3xl p-6 shadow-2xl shadow-purple-500/20">
+      <div className="max-w-full mx-auto p-4">
+        <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border border-purple-500/20 rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/10">
           <iframe
+            key={iframeKey}
             src="/painel-onboarding.html"
-            className="w-full h-[calc(100vh-200px)] rounded-xl bg-white"
+            className="w-full h-[calc(100vh-120px)] bg-transparent"
             title="Painel de Onboarding"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
           />
         </div>
       </div>
