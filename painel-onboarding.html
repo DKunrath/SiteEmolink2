@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Edição - Onboarding Emolink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+            color: #F9FAFB;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #F59E0B;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .subtitle {
+            color: #D1D5DB;
+            font-size: 16px;
+        }
+
+        .login-section {
+            background: #1F2937;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 500px;
+            margin: 100px auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-section h2 {
+            color: #F59E0B;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #D1D5DB;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #374151;
+            border: 2px solid #4B5563;
+            border-radius: 8px;
+            color: #F9FAFB;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #F59E0B;
+            background: #1F2937;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        button {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #374151;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #4B5563;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        .step-card {
+            background: #1F2937;
+            padding: 24px;
+            border-radius: 16px;
+            border: 2px solid #374151;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .step-card:hover {
+            border-color: #F59E0B;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+        }
+
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .step-number {
+            background: #F59E0B;
+            color: #1F2937;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .step-type {
+            background: #374151;
+            color: #F59E0B;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .step-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #F9FAFB;
+            margin-bottom: 8px;
+        }
+
+        .step-subtitle {
+            color: #9CA3AF;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1F2937;
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #374151;
+        }
+
+        .modal-header h2 {
+            color: #F59E0B;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            color: #9CA3AF;
+            font-size: 28px;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #374151;
+            color: #F9FAFB;
+        }
+
+        .questions-list {
+            margin: 24px 0;
+        }
+
+        .question-item {
+            background: #374151;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .question-item:hover {
+            border-color: #F59E0B;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            color: #F9FAFB;
+            font-weight: 500;
+            flex: 1;
+            margin-right: 16px;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .options-list {
+            margin-top: 12px;
+            padding-left: 20px;
+        }
+
+        .option-item {
+            background: #1F2937;
+            padding: 10px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .option-text {
+            color: #D1D5DB;
+            font-size: 14px;
+        }
+
+        .loading-texts-list {
+            margin: 24px 0;
+        }
+
+        .loading-text-item {
+            background: #374151;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid #10B981;
+            color: #10B981;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #EF4444;
+            color: #EF4444;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3B82F6;
+            color: #3B82F6;
+        }
+
+        .spinner {
+            border: 3px solid #374151;
+            border-top: 3px solid #F59E0B;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            background: #1F2937;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid #374151;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-single {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .badge-multiple {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9CA3AF;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .user-info {
+            background: #374151;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-email {
+            color: #D1D5DB;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .steps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p style="margin-top: 16px; color: #F9FAFB;">Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Editar Etapa</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://qexudasafvkowkqqmexr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFleHVkYXNhZnZrb3drcXFtZXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NTk1MDUsImV4cCI6MjA3NDIzNTUwNX0.s_BbEGsntWSgp_LicHHqQeaFW2Xaa3-ADkz2F4yS3oI';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let allSteps = [];
+
+        // Inicialização
+        async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                renderApp();
+                loadSteps();
+            } else {
+                renderLogin();
+            }
+        }
+
+        // Renderizar tela de login
+        function renderLogin() {
+            document.getElementById('app').innerHTML = `
+                <div class="login-section">
+                    <h2>🔐 Login de Administrador</h2>
+                    <div id="loginAlert"></div>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="loginPassword" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" style="width: 100%;">Entrar no Painel</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        // Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            showLoading();
+            
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            hideLoading();
+
+            if (error) {
+                showAlert('loginAlert', 'Erro ao fazer login: ' + error.message, 'error');
+                return;
+            }
+
+            currentUser = data.user;
+            renderApp();
+            loadSteps();
+        }
+
+        // Logout
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            renderLogin();
+        }
+
+        // Renderizar app principal
+        function renderApp() {
+            document.getElementById('app').innerHTML = `
+                <div class="container">
+                    <header>
+                        <h1>
+                            <span>🎨</span>
+                            Painel de Edição - Onboarding
+                        </h1>
+                        <p class="subtitle">Gerencie o conteúdo das telas de boas-vindas do app Emolink</p>
+                    </header>
+
+                    <div class="user-info">
+                        <span class="user-email">👤 ${currentUser.email}</span>
+                        <button class="btn-secondary btn-small" onclick="handleLogout()">Sair</button>
+                    </div>
+
+                    <div id="alert"></div>
+
+                    <div id="stepsContainer">
+                        <div class="empty-state">
+                            <div class="spinner"></div>
+                            <p>Carregando etapas...</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Carregar etapas
+        async function loadSteps() {
+            showLoading();
+
+            const { data, error } = await supabase
+                .from('onboarding_content')
+                .select('*')
+                .order('step_order');
+
+            hideLoading();
+
+            if (error) {
+                showAlert('alert', 'Erro ao carregar etapas: ' + error.message, 'error');
+                return;
+            }
+
+            allSteps = data || [];
+            renderSteps();
+        }
+
+        // Renderizar lista de etapas
+        function renderSteps() {
+            const container = document.getElementById('stepsContainer');
+            
+            if (allSteps.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p style="font-size: 18px;">Nenhuma etapa encontrada</p>
+                        <p style="margin-top: 8px;">Execute o SQL no Supabase para popular os dados</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="steps-grid">
+                    ${allSteps.map(step => `
+                        <div class="step-card" onclick="editStep('${step.id}')">
+                            <div class="step-header">
+                                <div class="step-number">${step.step_order}</div>
+                                <div class="step-type">${step.step_type}</div>
+                            </div>
+                            <div class="step-title">${step.title}</div>
+                            ${step.subtitle ? `<div class="step-subtitle">${step.subtitle}</div>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Editar etapa
+        async function editStep(stepId) {
+            const step = allSteps.find(s => s.id === stepId);
+            if (!step) return;
+
+            showLoading();
+
+            let modalContent = `
+                <form onsubmit="saveStep(event, '${stepId}')">
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="title" value="${escapeHtml(step.title)}" required>
+                    </div>
+
+                    ${step.step_type !== 'loading' ? `
+                        <div class="form-group">
+                            <label>Subtítulo</label>
+                            <textarea name="subtitle">${escapeHtml(step.subtitle || '')}</textarea>
+                        </div>
+                    ` : ''}
+
+                    ${step.step_type === 'welcome' || step.step_type === 'result' ? `
+                        <div class="form-group">
+                            <label>Texto do Botão</label>
+                            <input type="text" name="button_text" value="${escapeHtml(step.button_text || '')}">
+                        </div>
+                    ` : ''}
+            `;
+
+            // Se for step de perguntas, carregar perguntas
+            if (step.step_type === 'questions') {
+                const { data: questions } = await supabase
+                    .from('onboarding_questions')
+                    .select('*')
+                    .eq('content_id', stepId)
+                    .order('question_order');
+
+                modalContent += `
+                    <div class="questions-list">
+                        <h3 style="color: #F59E0B; margin-bottom: 16px;">Perguntas</h3>
+                        ${questions.map(q => `
+                            <div class="question-item">
+                                <div class="question-header">
+                                    <div class="question-text">${escapeHtml(q.question_text)}</div>
+                                    <div class="question-actions">
+                                        <button type="button" class="btn-secondary btn-small" onclick="editQuestion('${q.id}')">Editar</button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="badge badge-${q.question_type}">${q.question_type}</span>
+                                    ${q.max_selections ? `<span class="badge" style="background: #374151;">Max: ${q.max_selections}</span>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            // Se for loading, carregar textos
+            if (step.step_type === 'loading') {
+                const { data: loadingTexts } = await supabase
+                    .from('onboarding_loading_texts')
+                    .select('*')
+                    .eq('content_id', stepId)
+                    .order('text_order');
+
+                modalContent += `
+                    <div class="loading-texts-list">
+                        <h3 style="color: #F59E0B; margin-bottom: 16px;">Textos de Loading</h3>
+                        ${loadingTexts.map(lt => `
+                            <div class="loading-text-item">
+                                <span class="option-text">${lt.text_order}. ${escapeHtml(lt.loading_text)}</span>
+                                <button type="button" class="btn-secondary btn-small" onclick="editLoadingText('${lt.id}')">Editar</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            modalContent += `
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Alterações</button>
+                    </div>
+                </form>
+            `;
+
+            document.getElementById('modalTitle').textContent = `Editar: ${step.title}`;
+            document.getElementById('modalBody').innerHTML = modalContent;
+            document.getElementById('editModal').classList.add('active');
+            
+            hideLoading();
+        }
+
+        // Salvar step
+        async function saveStep(e, stepId) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            showLoading();
+
+            const { error } = await supabase
+                .from('onboarding_content')
+                .update({
+                    title: formData.get('title'),
+                    subtitle: formData.get('subtitle') || null,
+                    button_text: formData.get('button_text') || null,
+                })
+                .eq('id', stepId);
+
+            hideLoading();
+
+            if (error) {
+                showAlert('alert', 'Erro ao salvar: ' + error.message, 'error');
+                return;
+            }
+
+            showAlert('alert', 'Etapa atualizada com sucesso! ✅', 'success');
+            closeModal();
+            loadSteps();
+        }
+
+        // Editar pergunta
+        async function editQuestion(questionId) {
+            showLoading();
+
+            const { data: question } = await supabase
+                .from('onboarding_questions')
+                .select('*')
+                .eq('id', questionId)
+                .single();
+
+            const { data: options } = await supabase
+                .from('onboarding_question_options')
+                .select('*')
+                .eq('question_id', questionId)
+                .order('option_order');
+
+            hideLoading();
+
+            const modalContent = `
+                <form onsubmit="saveQuestion(event, '${questionId}')">
+                    <div class="form-group">
+                        <label>Texto da Pergunta *</label>
+                        <textarea name="question_text" required>${escapeHtml(question.question_text)}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select name="question_type">
+                            <option value="single" ${question.question_type === 'single' ? 'selected' : ''}>Escolha Única</option>
+                            <option value="multiple" ${question.question_type === 'multiple' ? 'selected' : ''}>Múltipla Escolha</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Máximo de Seleções (para múltipla escolha)</label>
+                        <input type="number" name="max_selections" value="${question.max_selections || 1}" min="1">
+                    </div>
+
+                    <h3 style="color: #F59E0B; margin: 24px 0 16px;">Opções de Resposta</h3>
+                    ${options.map(opt => `
+                        <div class="form-group">
+                            <label>Opção ${opt.option_order}</label>
+                            <input type="text" name="option_${opt.id}" value="${escapeHtml(opt.option_text)}">
+                        </div>
+                    `).join('')}
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Pergunta</button>
+                    </div>
+                </form>
+            `;
+
+            document.getElementById('modalTitle').textContent = 'Editar Pergunta';
+            document.getElementById('modalBody').innerHTML = modalContent;
+        }
+
+        // Salvar pergunta
+        async function saveQuestion(e, questionId) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            showLoading();
+
+            // Atualizar pergunta
+            const { error: qError } = await supabase
+                .from('onboarding_questions')
+                .update({
+                    question_text: formData.get('question_text'),
+                    question_type: formData.get('question_type'),
+                    max_selections: formData.get('max_selections') || null,
+                })
+                .eq('id', questionId);
+
+            if (qError) {
+                hideLoading();
+                showAlert('alert', 'Erro ao salvar pergunta: ' + qError.message, 'error');
+                return;
+            }
+
+            // Atualizar opções
+            const { data: options } = await supabase
+                .from('onboarding_question_options')
+                .select('id')
+                .eq('question_id', questionId);
+
+            for (const opt of options) {
+                const newText = formData.get(`option_${opt.id}`);
+                if (newText) {
+                    await supabase
+                        .from('onboarding_question_options')
+                        .update({ option_text: newText })
+                        .eq('id', opt.id);
+                }
+            }
+
+            hideLoading();
+            showAlert('alert', 'Pergunta atualizada com sucesso! ✅', 'success');
+            closeModal();
+            loadSteps();
+        }
+
+        // Editar texto de loading
+        async function editLoadingText(textId) {
+            showLoading();
+
+            const { data: loadingText } = await supabase
+                .from('onboarding_loading_texts')
+                .select('*')
+                .eq('id', textId)
+                .single();
+
+            hideLoading();
+
+            const modalContent = `
+                <form onsubmit="saveLoadingText(event, '${textId}')">
+                    <div class="form-group">
+                        <label>Texto de Loading *</label>
+                        <input type="text" name="loading_text" value="${escapeHtml(loadingText.loading_text)}" required>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar</button>
+                    </div>
+                </form>
+            `;
+
+            document.getElementById('modalTitle').textContent = 'Editar Texto de Loading';
+            document.getElementById('modalBody').innerHTML = modalContent;
+        }
+
+        // Salvar texto de loading
+        async function saveLoadingText(e, textId) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            showLoading();
+
+            const { error } = await supabase
+                .from('onboarding_loading_texts')
+                .update({ loading_text: formData.get('loading_text') })
+                .eq('id', textId);
+
+            hideLoading();
+
+            if (error) {
+                showAlert('alert', 'Erro ao salvar: ' + error.message, 'error');
+                return;
+            }
+
+            showAlert('alert', 'Texto atualizado com sucesso! ✅', 'success');
+            closeModal();
+            loadSteps();
+        }
+
+        // Utilities
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            container.innerHTML = `<div class="alert alert-${type}">${icon} ${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Iniciar app
+        init();
+    </script>
+</body>
+</html>
