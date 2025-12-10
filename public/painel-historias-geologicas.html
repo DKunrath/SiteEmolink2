@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel - Histórias Geológicas</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      padding: 0;
+      color: #1e293b;
+    }
+
+    .container {
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background: white;
+      padding: 24px 32px;
+      border-bottom: 1px solid #e2e8f0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #0f172a;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .subtitle {
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0;
+      background: white;
+      padding: 0 32px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .tab {
+      padding: 16px 24px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #64748b;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .tab:hover {
+      color: #7c3aed;
+      background: #f8fafc;
+    }
+
+    .tab.active {
+      color: #7c3aed;
+      border-bottom-color: #7c3aed;
+      background: transparent;
+    }
+
+    .content {
+      background: #f8fafc;
+      padding: 32px;
+      min-height: calc(100vh - 180px);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      line-height: 1;
+    }
+
+    .btn-primary {
+      background: #7c3aed;
+      color: white;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-primary:hover {
+      background: #6d28d9;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: white;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-success:hover {
+      background: #059669;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: white;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .story-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+      background: white;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .story-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .story-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 0;
+    }
+
+    .story-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .story-info {
+      font-size: 13px;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    .story-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .pages-list {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .page-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      padding: 16px 20px;
+      margin-bottom: 8px;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      border-left: 3px solid #7c3aed;
+      transition: all 0.2s;
+    }
+
+    .page-item:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .page-number {
+      background: #ede9fe;
+      color: #7c3aed;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-right: 16px;
+      min-width: 70px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .page-content {
+      flex: 1;
+      color: #475569;
+      line-height: 1.7;
+      max-height: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+    }
+
+    .page-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 16px;
+      flex-shrink: 0;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 0;
+      border-radius: 8px;
+      max-width: 800px;
+      width: 90%;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+    
+    .modal-content form {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: calc(90vh - 80px);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 0;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      color: #ef4444;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: white;
+      color: #1e293b;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #7c3aed;
+      box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+    
+    input[type="checkbox"] {
+      width: auto;
+      margin-right: 8px;
+    }
+    
+    small {
+      color: #64748b;
+      font-size: 12px;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #6b7280;
+    }
+
+    .spinner {
+      border: 3px solid #f3f4f6;
+      border-top: 3px solid #667eea;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.025em;
+    }
+
+    .badge-success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-inactive {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6b7280;
+    }
+
+    .empty-state-icon {
+      font-size: 64px;
+      margin-bottom: 15px;
+      opacity: 0.5;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .char-counter {
+      font-size: 12px;
+      color: #6b7280;
+      text-align: right;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          Histórias Geológicas
+        </h1>
+        <p class="subtitle">Gerencie as histórias das pedras e suas páginas</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('stories')">Histórias</button>
+      <button class="tab" onclick="switchTab('pages')">Páginas</button>
+    </div>
+
+    <div class="content">
+      <!-- Tab: Histórias -->
+      <div id="stories-tab" class="tab-content active">
+        <div class="section-header">
+          <h2 class="section-title">Histórias Cadastradas</h2>
+          <button class="btn btn-primary" onclick="openAddStoryModal()">+ Nova História</button>
+        </div>
+        <div id="stories-list" class="loading">
+          <div class="spinner"></div>
+          <p>Carregando histórias...</p>
+        </div>
+      </div>
+
+      <!-- Tab: Páginas -->
+      <div id="pages-tab" class="tab-content">
+        <div class="section-header">
+          <h2 class="section-title">Gerenciar Páginas por História</h2>
+          <div>
+            <select id="story-filter" onchange="loadPagesByStory()" style="width: 300px;">
+              <option value="">Selecione uma história</option>
+            </select>
+          </div>
+        </div>
+        <div id="pages-list" class="empty-state">
+          <div class="empty-state-icon">📖</div>
+          <p>Selecione uma história para ver suas páginas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Adicionar/Editar História -->
+  <div id="story-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="story-modal-title">Nova História</h3>
+        <button class="close-btn" onclick="closeStoryModal()">×</button>
+      </div>
+      <form id="story-form">
+        <input type="hidden" id="story-edit-id">
+        
+        <div class="form-group">
+          <label for="story-id">ID da História *</label>
+          <input type="text" id="story-id" required placeholder="Ex: selenita">
+          <small style="color: #6b7280;">ID único para identificar a história (sem espaços)</small>
+        </div>
+
+        <div class="form-group">
+          <label for="story-title">Título *</label>
+          <input type="text" id="story-title" required placeholder="Ex: A História da Tristeza — A Jornada da Selenita">
+        </div>
+
+        <div class="form-group">
+          <label for="story-subtitle">Subtítulo</label>
+          <input type="text" id="story-subtitle" placeholder="Ex: Síntese Simbólica">
+        </div>
+
+        <div class="form-group">
+          <label for="story-crystal">Nome do Cristal</label>
+          <input type="text" id="story-crystal" placeholder="Ex: Selenita/Angelita">
+        </div>
+
+        <div class="form-group">
+          <label for="story-theme">Tema/Emoção</label>
+          <input type="text" id="story-theme" placeholder="Ex: Tristeza">
+        </div>
+
+        <div class="form-group">
+          <label for="story-description">Descrição</label>
+          <textarea id="story-description" placeholder="Descrição breve da história..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="story-order">Ordem de Exibição *</label>
+          <input type="number" id="story-order" required min="1" value="1">
+        </div>
+
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="story-active" checked>
+            História Ativa
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closeStoryModal()">Cancelar</button>
+          <button type="submit" class="btn btn-success">Salvar História</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Adicionar/Editar Página -->
+  <div id="page-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="page-modal-title">Nova Página</h3>
+        <button class="close-btn" onclick="closePageModal()">×</button>
+      </div>
+      <form id="page-form">
+        <input type="hidden" id="page-edit-id">
+        <input type="hidden" id="page-story-id">
+        
+        <div class="form-group">
+          <label for="page-number">Número da Página *</label>
+          <input type="number" id="page-number" required min="1" value="1">
+        </div>
+
+        <div class="form-group">
+          <label for="page-content">Conteúdo da Página *</label>
+          <textarea id="page-content" required placeholder="Digite o conteúdo desta página da história..." oninput="updateCharCount()"></textarea>
+          <div class="char-counter" id="char-counter">0 caracteres</div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" onclick="closePageModal()">Cancelar</button>
+          <button type="submit" class="btn btn-success">Salvar Página</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Configuração do Supabase
+    const SUPABASE_URL = 'https://qexudasafvkowkqqmexr.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFleHVkYXNhZnZrb3drcXFtZXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NTk1MDUsImV4cCI6MjA3NDIzNTUwNX0.s_BbEGsntWSgp_LicHHqQeaFW2Xaa3-ADkz2F4yS3oI';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentStories = [];
+
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+      loadStories();
+      
+      // Event listeners
+      document.getElementById('story-form').addEventListener('submit', saveStory);
+      document.getElementById('page-form').addEventListener('submit', savePage);
+    });
+
+    // Trocar abas
+    function switchTab(tabName) {
+      // Atualizar botões
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Atualizar conteúdo
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.getElementById(tabName + '-tab').classList.add('active');
+
+      // Carregar dados se necessário
+      if (tabName === 'stories') {
+        loadStories();
+      } else if (tabName === 'pages') {
+        loadStoryFilter();
+      }
+    }
+
+    // ============= HISTÓRIAS =============
+    
+    async function loadStories() {
+      const listDiv = document.getElementById('stories-list');
+      listDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando histórias...</p></div>';
+
+      try {
+        const { data, error } = await supabase
+          .from('geological_stories')
+          .select('*')
+          .order('story_order', { ascending: true });
+
+        if (error) throw error;
+
+        currentStories = data;
+
+        if (!data || data.length === 0) {
+          listDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📚</div><p>Nenhuma história cadastrada ainda</p></div>';
+          return;
+        }
+
+        listDiv.innerHTML = data.map(story => `
+          <div class="story-card">
+            <div class="story-header">
+              <div>
+                <div class="story-title">
+                  ${story.title}
+                  <span class="badge ${story.is_active ? 'badge-success' : 'badge-inactive'}">
+                    ${story.is_active ? 'Ativa' : 'Inativa'}
+                  </span>
+                </div>
+                <div class="story-info">
+                  <strong>ID:</strong> ${story.story_id} | 
+                  <strong>Cristal:</strong> ${story.crystal_name || 'N/A'} | 
+                  <strong>Tema:</strong> ${story.theme || 'N/A'} | 
+                  <strong>Ordem:</strong> ${story.story_order}
+                </div>
+                ${story.subtitle ? `<div class="story-info" style="margin-top: 5px;"><em>${story.subtitle}</em></div>` : ''}
+              </div>
+              <div class="story-actions">
+                <button class="btn btn-primary" onclick="editStory('${story.story_id}')">Editar</button>
+                <button class="btn btn-primary" onclick="managePages('${story.story_id}')">Páginas</button>
+                <button class="btn btn-danger" onclick="deleteStory('${story.story_id}', '${story.title.replace(/'/g, "\\'")}')">Excluir</button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+      } catch (error) {
+        console.error('Erro ao carregar histórias:', error);
+        listDiv.innerHTML = '<div class="empty-state"><p style="color: #ef4444;">Erro ao carregar histórias: ' + error.message + '</p></div>';
+      }
+    }
+
+    function openAddStoryModal() {
+      document.getElementById('story-modal-title').textContent = 'Nova História';
+      document.getElementById('story-form').reset();
+      document.getElementById('story-edit-id').value = '';
+      document.getElementById('story-id').disabled = false;
+      document.getElementById('story-active').checked = true;
+      document.getElementById('story-modal').classList.add('active');
+    }
+
+    function editStory(storyId) {
+      const story = currentStories.find(s => s.story_id === storyId);
+      if (!story) return;
+
+      document.getElementById('story-modal-title').textContent = 'Editar História';
+      document.getElementById('story-edit-id').value = story.story_id;
+      document.getElementById('story-id').value = story.story_id;
+      document.getElementById('story-id').disabled = true;
+      document.getElementById('story-title').value = story.title;
+      document.getElementById('story-subtitle').value = story.subtitle || '';
+      document.getElementById('story-crystal').value = story.crystal_name || '';
+      document.getElementById('story-theme').value = story.theme || '';
+      document.getElementById('story-description').value = story.description || '';
+      document.getElementById('story-order').value = story.story_order;
+      document.getElementById('story-active').checked = story.is_active;
+      
+      document.getElementById('story-modal').classList.add('active');
+    }
+
+    async function saveStory(e) {
+      e.preventDefault();
+
+      const editId = document.getElementById('story-edit-id').value;
+      const storyData = {
+        story_id: document.getElementById('story-id').value.trim().toLowerCase(),
+        title: document.getElementById('story-title').value.trim(),
+        subtitle: document.getElementById('story-subtitle').value.trim() || null,
+        crystal_name: document.getElementById('story-crystal').value.trim() || null,
+        theme: document.getElementById('story-theme').value.trim() || null,
+        description: document.getElementById('story-description').value.trim() || null,
+        story_order: parseInt(document.getElementById('story-order').value),
+        is_active: document.getElementById('story-active').checked
+      };
+
+      console.log('🔍 Salvando história:', { editId, storyData });
+
+      try {
+        let result;
+        if (editId) {
+          // Atualizar
+          result = await supabase
+            .from('geological_stories')
+            .update(storyData)
+            .eq('story_id', editId)
+            .select();
+
+          console.log('📚 Resposta Supabase (update história):', result);
+
+          if (result.error) throw result.error;
+
+          if (result.data && result.data.length === 0) {
+            console.warn('⚠️ RLS pode estar bloqueando a atualização da história!');
+            alert('⚠️ Salvo localmente, mas RLS pode estar bloqueando no banco. Verifique o console!');
+            return;
+          }
+
+          alert('História atualizada com sucesso!');
+        } else {
+          // Inserir
+          result = await supabase
+            .from('geological_stories')
+            .insert([storyData])
+            .select();
+
+          console.log('📚 Resposta Supabase (insert história):', result);
+
+          if (result.error) throw result.error;
+          alert('História criada com sucesso!');
+        }
+
+        console.log('✅ História salva com sucesso!');
+        closeStoryModal();
+        loadStories();
+      } catch (error) {
+        console.error('❌ Erro ao salvar história:', error);
+        alert('Erro ao salvar história: ' + error.message);
+      }
+    }
+
+    async function deleteStory(storyId, storyTitle) {
+      if (!confirm(`Tem certeza que deseja excluir a história "${storyTitle}"?\n\nIsso também excluirá TODAS as páginas dessa história!`)) {
+        return;
+      }
+
+      try {
+        const { error } = await supabase
+          .from('geological_stories')
+          .delete()
+          .eq('story_id', storyId);
+
+        if (error) throw error;
+
+        alert('História excluída com sucesso!');
+        loadStories();
+      } catch (error) {
+        console.error('Erro ao excluir história:', error);
+        alert('Erro ao excluir história: ' + error.message);
+      }
+    }
+
+    function closeStoryModal() {
+      document.getElementById('story-modal').classList.remove('active');
+    }
+
+    // ============= PÁGINAS =============
+
+    async function loadStoryFilter() {
+      const select = document.getElementById('story-filter');
+      
+      try {
+        const { data, error } = await supabase
+          .from('geological_stories')
+          .select('story_id, title')
+          .order('story_order', { ascending: true });
+
+        if (error) throw error;
+
+        select.innerHTML = '<option value="">Selecione uma história</option>';
+        data.forEach(story => {
+          select.innerHTML += `<option value="${story.story_id}">${story.title}</option>`;
+        });
+      } catch (error) {
+        console.error('Erro ao carregar histórias:', error);
+      }
+    }
+
+    async function loadPagesByStory() {
+      const storyId = document.getElementById('story-filter').value;
+      const listDiv = document.getElementById('pages-list');
+
+      if (!storyId) {
+        listDiv.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📖</div><p>Selecione uma história para ver suas páginas</p></div>';
+        return;
+      }
+
+      listDiv.innerHTML = '<div class="loading"><div class="spinner"></div><p>Carregando páginas...</p></div>';
+
+      try {
+        const { data, error } = await supabase
+          .from('geological_story_pages')
+          .select('*')
+          .eq('story_id', storyId)
+          .order('page_number', { ascending: true });
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          listDiv.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📄</div>
+              <p>Nenhuma página cadastrada para esta história</p>
+              <button class="btn btn-primary" style="margin-top: 15px;" onclick="openAddPageModal('${storyId}')">+ Adicionar Primeira Página</button>
+            </div>
+          `;
+          return;
+        }
+
+        listDiv.innerHTML = `
+          <div style="margin-bottom: 20px;">
+            <button class="btn btn-primary" onclick="openAddPageModal('${storyId}')">+ Nova Página</button>
+          </div>
+          ${data.map(page => `
+            <div class="page-item">
+              <div class="page-number">Pág. ${page.page_number}</div>
+              <div class="page-content">${page.content}</div>
+              <div class="page-actions">
+                <button class="btn btn-primary" onclick="editPage('${page.id}', '${storyId}')">Editar</button>
+                <button class="btn btn-danger" onclick="deletePage('${page.id}', ${page.page_number})">Excluir</button>
+              </div>
+            </div>
+          `).join('')}
+        `;
+
+      } catch (error) {
+        console.error('Erro ao carregar páginas:', error);
+        listDiv.innerHTML = '<div class="empty-state"><p style="color: #ef4444;">Erro ao carregar páginas: ' + error.message + '</p></div>';
+      }
+    }
+
+    function managePages(storyId) {
+      switchTab('pages');
+      document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab')[1].classList.add('active');
+      
+      document.getElementById('story-filter').value = storyId;
+      loadPagesByStory();
+    }
+
+    function openAddPageModal(storyId) {
+      document.getElementById('page-modal-title').textContent = 'Nova Página';
+      document.getElementById('page-form').reset();
+      document.getElementById('page-edit-id').value = '';
+      document.getElementById('page-story-id').value = storyId;
+      
+      // Calcular próximo número de página
+      getNextPageNumber(storyId);
+      
+      document.getElementById('page-modal').classList.add('active');
+      updateCharCount();
+    }
+
+    async function getNextPageNumber(storyId) {
+      try {
+        const { data, error } = await supabase
+          .from('geological_story_pages')
+          .select('page_number')
+          .eq('story_id', storyId)
+          .order('page_number', { ascending: false })
+          .limit(1);
+
+        if (error) throw error;
+
+        const nextNumber = data && data.length > 0 ? data[0].page_number + 1 : 1;
+        document.getElementById('page-number').value = nextNumber;
+      } catch (error) {
+        console.error('Erro ao calcular próximo número:', error);
+      }
+    }
+
+    async function editPage(pageId, storyId) {
+      try {
+        const { data, error } = await supabase
+          .from('geological_story_pages')
+          .select('*')
+          .eq('id', pageId)
+          .single();
+
+        if (error) throw error;
+
+        document.getElementById('page-modal-title').textContent = 'Editar Página';
+        document.getElementById('page-edit-id').value = data.id;
+        document.getElementById('page-story-id').value = storyId;
+        document.getElementById('page-number').value = data.page_number;
+        document.getElementById('page-content').value = data.content;
+        
+        document.getElementById('page-modal').classList.add('active');
+        updateCharCount();
+      } catch (error) {
+        console.error('Erro ao carregar página:', error);
+        alert('Erro ao carregar página: ' + error.message);
+      }
+    }
+
+    async function savePage(e) {
+      e.preventDefault();
+
+      const editId = document.getElementById('page-edit-id').value;
+      const storyId = document.getElementById('page-story-id').value;
+      const pageData = {
+        story_id: storyId,
+        page_number: parseInt(document.getElementById('page-number').value),
+        content: document.getElementById('page-content').value.trim()
+      };
+
+      console.log('🔍 Salvando página:', { editId, pageData });
+
+      try {
+        let result;
+        if (editId) {
+          // Atualizar
+          result = await supabase
+            .from('geological_story_pages')
+            .update(pageData)
+            .eq('id', editId)
+            .select();
+
+          console.log('📄 Resposta Supabase (update página):', result);
+
+          if (result.error) throw result.error;
+
+          if (result.data && result.data.length === 0) {
+            console.warn('⚠️ RLS pode estar bloqueando a atualização da página!');
+            alert('⚠️ Salvo localmente, mas RLS pode estar bloqueando no banco. Verifique o console!');
+            return;
+          }
+
+          alert('Página atualizada com sucesso!');
+        } else {
+          // Inserir
+          result = await supabase
+            .from('geological_story_pages')
+            .insert([pageData])
+            .select();
+
+          console.log('📄 Resposta Supabase (insert página):', result);
+
+          if (result.error) throw result.error;
+          alert('Página criada com sucesso!');
+        }
+
+        console.log('✅ Página salva com sucesso!');
+        closePageModal();
+        loadPagesByStory();
+      } catch (error) {
+        console.error('❌ Erro ao salvar página:', error);
+        alert('Erro ao salvar página: ' + error.message);
+      }
+    }
+
+    async function deletePage(pageId, pageNumber) {
+      if (!confirm(`Tem certeza que deseja excluir a página ${pageNumber}?`)) {
+        return;
+      }
+
+      try {
+        const { error } = await supabase
+          .from('geological_story_pages')
+          .delete()
+          .eq('id', pageId);
+
+        if (error) throw error;
+
+        alert('Página excluída com sucesso!');
+        loadPagesByStory();
+      } catch (error) {
+        console.error('Erro ao excluir página:', error);
+        alert('Erro ao excluir página: ' + error.message);
+      }
+    }
+
+    function closePageModal() {
+      document.getElementById('page-modal').classList.remove('active');
+    }
+
+    function updateCharCount() {
+      const content = document.getElementById('page-content').value;
+      document.getElementById('char-counter').textContent = `${content.length} caracteres`;
+    }
+
+    // Fechar modais ao clicar fora
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -74,6 +74,13 @@ export default function Painel() {
               <i className="ri-video-line mr-2"></i>
               Vídeo-Aulas
             </button>
+            <button
+              onClick={() => navigate('/painel-historias-geologicas')}
+              className="px-4 py-2 bg-purple-500/10 border border-purple-400/20 text-purple-300 rounded-lg hover:bg-purple-500/20 transition-all duration-300"
+            >
+              <i className="ri-book-line mr-2"></i>
+              Histórias Geológicas
+            </button>
           </nav>
         </div>
       </header>

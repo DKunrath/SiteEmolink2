@@ -17,79 +17,87 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
-            color: #F9FAFB;
+            background: #f8fafc;
+            color: #1e293b;
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
         }
 
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
         }
 
         header {
-            background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
-            padding: 30px;
-            border-radius: 16px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.3);
+            background: white;
+            padding: 24px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         h1 {
-            color: #FFF;
-            font-size: 32px;
+            color: #0f172a;
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 10px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 16px;
+            color: #64748b;
+            font-size: 14px;
         }
 
         .tabs {
             display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            border-bottom: 2px solid #374151;
+            gap: 0;
+            background: white;
+            padding: 0 32px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .tab {
-            background: none;
-            color: #9CA3AF;
-            padding: 12px 24px;
+            background: transparent;
+            color: #64748b;
+            padding: 16px 24px;
             border: none;
-            border-bottom: 3px solid transparent;
+            border-bottom: 2px solid transparent;
             cursor: pointer;
             font-weight: 600;
-            font-size: 15px;
-            transition: all 0.3s;
-            margin-bottom: -2px;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
         .tab.active {
-            color: #F59E0B;
-            border-bottom-color: #F59E0B;
+            color: #7c3aed;
+            border-bottom-color: #7c3aed;
         }
 
         .tab:hover {
-            color: #F59E0B;
+            color: #7c3aed;
+            background: #f8fafc;
         }
 
         .login-section {
-            background: #1F2937;
+            background: white;
             padding: 40px;
-            border-radius: 16px;
-            max-width: 500px;
+            border-radius: 8px;
+            max-width: 450px;
             margin: 100px auto;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
         }
 
         .login-section h2 {
-            color: #F59E0B;
+            color: #0f172a;
             margin-bottom: 24px;
             text-align: center;
+            font-size: 24px;
         }
 
         .form-group {
@@ -104,9 +112,10 @@
 
         label {
             display: block;
-            color: #D1D5DB;
-            margin-bottom: 8px;
-            font-weight: 500;
+            color: #0f172a;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         input[type="email"],
@@ -116,73 +125,83 @@
         textarea,
         select {
             width: 100%;
-            padding: 12px 16px;
-            background: #374151;
-            border: 2px solid #4B5563;
-            border-radius: 8px;
-            color: #F9FAFB;
-            font-size: 16px;
-            transition: all 0.3s;
+            padding: 10px 14px;
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            color: #1e293b;
+            font-size: 14px;
+            transition: all 0.2s;
         }
 
         input:focus,
         textarea:focus,
         select:focus {
             outline: none;
-            border-color: #F59E0B;
-            background: #1F2937;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
         }
 
         textarea {
             resize: vertical;
-            min-height: 80px;
+            min-height: 100px;
             font-family: inherit;
+            line-height: 1.6;
         }
 
         button {
-            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            background: #7c3aed;
             color: white;
-            padding: 14px 28px;
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 16px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
 
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            background: #6d28d9;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         button:active {
-            transform: translateY(0);
+            transform: scale(0.98);
         }
 
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
         .btn-secondary {
-            background: #374151;
+            background: white;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
             box-shadow: none;
         }
 
         .btn-secondary:hover {
-            background: #4B5563;
+            background: #f8fafc;
+            border-color: #cbd5e1;
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            background: #ef4444;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
         }
 
         .btn-small {
-            padding: 8px 16px;
-            font-size: 14px;
+            padding: 6px 14px;
+            font-size: 13px;
         }
 
         .btn-icon {
@@ -194,31 +213,39 @@
         }
 
         .block-card {
-            background: #1F2937;
+            background: white;
             padding: 24px;
-            border-radius: 16px;
-            border: 2px solid #374151;
-            margin-bottom: 32px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+        
+        .block-card:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .block-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             padding-bottom: 16px;
-            border-bottom: 2px solid #374151;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .block-info h2 {
-            color: #F59E0B;
-            font-size: 24px;
+            color: #0f172a;
+            font-size: 18px;
             margin-bottom: 4px;
+            font-weight: 700;
         }
 
         .block-meta {
-            color: #9CA3AF;
-            font-size: 14px;
+            color: #64748b;
+            font-size: 13px;
         }
 
         .block-actions {
@@ -232,22 +259,24 @@
         }
 
         .lesson-card {
-            background: #374151;
-            padding: 20px;
-            border-radius: 12px;
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            transition: all 0.3s;
-            border: 2px solid transparent;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+            border-left: 3px solid #7c3aed;
         }
 
         .lesson-card:hover {
-            border-color: #F59E0B;
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
         }
 
         .lesson-card.inactive {
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
         .lesson-info {
@@ -261,32 +290,32 @@
             justify-content: center;
             width: 32px;
             height: 32px;
-            background: #F59E0B;
-            color: #1F2937;
-            border-radius: 50%;
+            background: #ede9fe;
+            color: #7c3aed;
+            border-radius: 6px;
             font-weight: 700;
             margin-right: 12px;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .lesson-title {
-            color: #F9FAFB;
-            font-size: 18px;
+            color: #0f172a;
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 4px;
         }
 
         .lesson-subtitle {
-            color: #9CA3AF;
-            font-size: 14px;
+            color: #64748b;
+            font-size: 13px;
             margin-bottom: 8px;
         }
 
         .lesson-meta {
             display: flex;
             gap: 16px;
-            font-size: 13px;
-            color: #6B7280;
+            font-size: 12px;
+            color: #64748b;
         }
 
         .lesson-actions {
@@ -298,24 +327,29 @@
         .badge {
             display: inline-block;
             padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
+            border-radius: 4px;
+            font-size: 11px;
             font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
         }
 
         .badge-active {
-            background: #10B981;
-            color: white;
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
         }
 
         .badge-inactive {
-            background: #6B7280;
-            color: white;
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
 
         .badge-exercises {
-            background: #8B5CF6;
-            color: white;
+            background: #ede9fe;
+            color: #6d28d9;
+            border: 1px solid #ddd6fe;
         }
 
         .modal {
@@ -325,7 +359,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 1000;
             overflow-y: auto;
             padding: 40px 20px;
@@ -338,28 +372,36 @@
         }
 
         .modal-content {
-            background: #1F2937;
-            padding: 32px;
-            border-radius: 16px;
+            background: white;
+            padding: 0;
+            border-radius: 8px;
             max-width: 700px;
             width: 100%;
             max-height: 90vh;
-            overflow-y: auto;
-            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #374151;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            background: #f8fafc;
         }
 
         .modal-header h2 {
-            color: #F59E0B;
-            font-size: 24px;
+            color: #0f172a;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .modal-content > form,
+        .modal-content > div:not(.modal-header) {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: calc(90vh - 80px);
         }
 
         .close-btn {
@@ -442,10 +484,11 @@
         }
 
         .loading-content {
-            background: #1F2937;
+            background: white;
             padding: 32px;
-            border-radius: 16px;
+            border-radius: 8px;
             text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         .action-buttons {
@@ -454,37 +497,42 @@
             justify-content: flex-end;
             margin-top: 24px;
             padding-top: 24px;
-            border-top: 2px solid #374151;
+            border-top: 1px solid #e2e8f0;
         }
 
         .user-info {
-            background: #374151;
+            background: white;
             padding: 12px 20px;
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
         }
 
         .user-email {
-            color: #D1D5DB;
+            color: #475569;
             font-size: 14px;
         }
 
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #9CA3AF;
+            color: #64748b;
         }
 
         .add-button {
-            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-            padding: 12px 24px;
-            font-size: 15px;
+            background: #10b981;
+            padding: 10px 20px;
+            font-size: 14px;
             display: inline-flex;
             align-items: center;
             gap: 8px;
+        }
+        
+        .add-button:hover {
+            background: #059669;
         }
 
         .youtube-preview {
@@ -639,30 +687,34 @@
             document.getElementById('app').innerHTML = `
                 <div class="container">
                     <header>
-                        <h1>🎬 Painel de Vídeo-Aulas</h1>
-                        <p class="subtitle">Gerencie os blocos e aulas de vídeo do app Emolink</p>
+                        <div>
+                            <h1>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                                </svg>
+                                Vídeo-Aulas
+                            </h1>
+                            <p class="subtitle">Gerencie os blocos e aulas de vídeo do app Emolink</p>
+                        </div>
                     </header>
-
-                    <div class="user-info">
-                        <span class="user-email">👤 ${currentUser.email}</span>
-                        <button class="btn-secondary btn-small" onclick="handleLogout()">Sair</button>
-                    </div>
-
-                    <div id="alert"></div>
 
                     <div class="tabs">
                         <button class="tab ${currentTab === 'lessons' ? 'active' : ''}" onclick="switchTab('lessons')">
-                            📚 Aulas
+                            Aulas
                         </button>
                         <button class="tab ${currentTab === 'exercises' ? 'active' : ''}" onclick="switchTab('exercises')">
-                            📝 Exercícios
+                            Exercícios
                         </button>
                         <button class="tab ${currentTab === 'blocks' ? 'active' : ''}" onclick="switchTab('blocks')">
-                            📦 Blocos
+                            Blocos
                         </button>
                     </div>
-
-                    <div id="content"></div>
+                    
+                    <div style="background: #f8fafc; padding: 32px; min-height: calc(100vh - 200px);">
+                        <div id="alert"></div>
+                        <div id="content"></div>
+                    </div>
                 </div>
             `;
             renderContent();

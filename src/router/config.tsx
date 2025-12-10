@@ -4,6 +4,7 @@ import Home from "../pages/home/page";
 import Login from "../pages/painel/Login";
 import Painel from "../pages/painel/Painel";
 import PainelVideoaulas from "../pages/painel/PainelVideoaulas";
+import PainelHistoriasGeologicas from "../pages/painel/PainelHistoriasGeologicas";
 
 const routes: RouteObject[] = [
   {
@@ -21,6 +22,10 @@ const routes: RouteObject[] = [
   {
     path: "/painel-videoaulas",
     element: <PainelVideoaulas />,
+  },
+  {
+    path: "/painel-historias-geologicas",
+    element: <PainelHistoriasGeologicas />,
   },
   {
     path: "*",
