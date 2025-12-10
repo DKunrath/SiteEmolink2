@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Painel() {
+export default function PainelVideoaulas() {
   const navigate = useNavigate();
   const [iframeKey, setIframeKey] = useState(0);
 
@@ -36,7 +36,7 @@ export default function Painel() {
                 <img src="/emolink_logo.png" alt="Emolink" className="w-full h-full object-contain" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Painel de Onboarding</h1>
+                <h1 className="text-2xl font-bold text-white">Painel de Vídeo-Aulas</h1>
                 <p className="text-sm text-purple-300">{userEmail}</p>
               </div>
             </div>
@@ -62,14 +62,14 @@ export default function Painel() {
           {/* Navigation */}
           <nav className="flex gap-2">
             <button
-              className="px-4 py-2 bg-purple-500/30 border border-purple-400/50 text-white rounded-lg font-semibold"
+              onClick={() => navigate('/painel')}
+              className="px-4 py-2 bg-purple-500/10 border border-purple-400/20 text-purple-300 rounded-lg hover:bg-purple-500/20 transition-all duration-300"
             >
               <i className="ri-survey-line mr-2"></i>
               Onboarding
             </button>
             <button
-              onClick={() => navigate('/painel-videoaulas')}
-              className="px-4 py-2 bg-purple-500/10 border border-purple-400/20 text-purple-300 rounded-lg hover:bg-purple-500/20 transition-all duration-300"
+              className="px-4 py-2 bg-purple-500/30 border border-purple-400/50 text-white rounded-lg font-semibold"
             >
               <i className="ri-video-line mr-2"></i>
               Vídeo-Aulas
@@ -78,14 +78,14 @@ export default function Painel() {
         </div>
       </header>
 
-      {/* Content - Iframe do painel-onboarding.html */}
+      {/* Content - Iframe do painel-videoaulas.html */}
       <div className="max-w-full mx-auto p-4">
         <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 backdrop-blur-sm border border-purple-500/20 rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/10">
           <iframe
             key={iframeKey}
-            src="/painel-onboarding.html"
+            src="/painel-videoaulas.html"
             className="w-full h-[calc(100vh-180px)] bg-transparent"
-            title="Painel de Onboarding"
+            title="Painel de Vídeo-Aulas"
             sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
           />
         </div>

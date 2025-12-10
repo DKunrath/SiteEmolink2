@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Vídeo-Aulas - Emolink</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+            color: #F9FAFB;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #7C3AED 0%, #5B21B6 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.3);
+        }
+
+        h1 {
+            color: #FFF;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 2px solid #374151;
+        }
+
+        .tab {
+            background: none;
+            color: #9CA3AF;
+            padding: 12px 24px;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s;
+            margin-bottom: -2px;
+        }
+
+        .tab.active {
+            color: #F59E0B;
+            border-bottom-color: #F59E0B;
+        }
+
+        .tab:hover {
+            color: #F59E0B;
+        }
+
+        .login-section {
+            background: #1F2937;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 500px;
+            margin: 100px auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-section h2 {
+            color: #F59E0B;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        label {
+            display: block;
+            color: #D1D5DB;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #374151;
+            border: 2px solid #4B5563;
+            border-radius: 8px;
+            color: #F9FAFB;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #F59E0B;
+            background: #1F2937;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        button {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #374151;
+            box-shadow: none;
+        }
+
+        .btn-secondary:hover {
+            background: #4B5563;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .btn-icon {
+            padding: 10px;
+            border-radius: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .block-card {
+            background: #1F2937;
+            padding: 24px;
+            border-radius: 16px;
+            border: 2px solid #374151;
+            margin-bottom: 32px;
+        }
+
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #374151;
+        }
+
+        .block-info h2 {
+            color: #F59E0B;
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .block-meta {
+            color: #9CA3AF;
+            font-size: 14px;
+        }
+
+        .block-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lessons-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .lesson-card {
+            background: #374151;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .lesson-card:hover {
+            border-color: #F59E0B;
+        }
+
+        .lesson-card.inactive {
+            opacity: 0.5;
+        }
+
+        .lesson-info {
+            flex: 1;
+            margin-right: 16px;
+        }
+
+        .lesson-order {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #F59E0B;
+            color: #1F2937;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+
+        .lesson-title {
+            color: #F9FAFB;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .lesson-subtitle {
+            color: #9CA3AF;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #6B7280;
+        }
+
+        .lesson-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background: #10B981;
+            color: white;
+        }
+
+        .badge-inactive {
+            background: #6B7280;
+            color: white;
+        }
+
+        .badge-exercises {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1F2937;
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #374151;
+        }
+
+        .modal-header h2 {
+            color: #F59E0B;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: none;
+            color: #9CA3AF;
+            font-size: 28px;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: #374151;
+            color: #F9FAFB;
+        }
+
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 2px solid #10B981;
+            color: #10B981;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #EF4444;
+            color: #EF4444;
+        }
+
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3B82F6;
+            color: #3B82F6;
+        }
+
+        .spinner {
+            border: 3px solid #374151;
+            border-top: 3px solid #F59E0B;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            background: #1F2937;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 2px solid #374151;
+        }
+
+        .user-info {
+            background: #374151;
+            padding: 12px 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-email {
+            color: #D1D5DB;
+            font-size: 14px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9CA3AF;
+        }
+
+        .add-button {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            padding: 12px 24px;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .youtube-preview {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            margin-top: 12px;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .color-option:hover,
+        .color-option.selected {
+            border-color: #F9FAFB;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p style="margin-top: 16px; color: #F9FAFB;">Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Modal</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do Supabase
+        const SUPABASE_URL = 'https://qexudasafvkowkqqmexr.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFleHVkYXNhZnZrb3drcXFtZXhyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg2NTk1MDUsImV4cCI6MjA3NDIzNTUwNX0.s_BbEGsntWSgp_LicHHqQeaFW2Xaa3-ADkz2F4yS3oI';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+        let blocks = [];
+        let lessons = [];
+        let exercises = [];
+        let currentTab = 'lessons';
+
+        const COLORS = [
+            '#8B5CF6', '#F59E0B', '#EF4444', '#10B981', '#3B82F6',
+            '#EC4899', '#F97316', '#06B6D4', '#7C3AED', '#14B8A6'
+        ];
+
+        // Inicialização
+        async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                renderApp();
+                await loadData();
+            } else {
+                renderLogin();
+            }
+        }
+
+        // Renderizar tela de login
+        function renderLogin() {
+            document.getElementById('app').innerHTML = `
+                <div class="login-section">
+                    <h2>🔐 Login de Administrador</h2>
+                    <div id="loginAlert"></div>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="loginEmail" required placeholder="seu@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Senha</label>
+                            <input type="password" id="loginPassword" required placeholder="••••••••">
+                        </div>
+                        <button type="submit" style="width: 100%;">Entrar no Painel</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        // Login
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            showLoading();
+            
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password
+            });
+
+            hideLoading();
+
+            if (error) {
+                showAlert('loginAlert', 'Erro ao fazer login: ' + error.message, 'error');
+                return;
+            }
+
+            currentUser = data.user;
+            renderApp();
+            loadData();
+        }
+
+        // Logout
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            renderLogin();
+        }
+
+        // Renderizar app principal
+        function renderApp() {
+            document.getElementById('app').innerHTML = `
+                <div class="container">
+                    <header>
+                        <h1>🎬 Painel de Vídeo-Aulas</h1>
+                        <p class="subtitle">Gerencie os blocos e aulas de vídeo do app Emolink</p>
+                    </header>
+
+                    <div class="user-info">
+                        <span class="user-email">👤 ${currentUser.email}</span>
+                        <button class="btn-secondary btn-small" onclick="handleLogout()">Sair</button>
+                    </div>
+
+                    <div id="alert"></div>
+
+                    <div class="tabs">
+                        <button class="tab ${currentTab === 'lessons' ? 'active' : ''}" onclick="switchTab('lessons')">
+                            📚 Aulas
+                        </button>
+                        <button class="tab ${currentTab === 'exercises' ? 'active' : ''}" onclick="switchTab('exercises')">
+                            📝 Exercícios
+                        </button>
+                        <button class="tab ${currentTab === 'blocks' ? 'active' : ''}" onclick="switchTab('blocks')">
+                            📦 Blocos
+                        </button>
+                    </div>
+
+                    <div id="content"></div>
+                </div>
+            `;
+            renderContent();
+        }
+
+        // Trocar aba
+        function switchTab(tab) {
+            currentTab = tab;
+            renderApp();
+        }
+
+        // Carregar dados
+        async function loadData() {
+            showLoading();
+
+            const [blocksData, lessonsData, exercisesData] = await Promise.all([
+                supabase.from('video_lesson_blocks').select('*').order('block_order'),
+                supabase.from('video_lessons').select('*').order('lesson_order'),
+                supabase.from('video_lesson_exercises').select('*')
+            ]);
+
+            hideLoading();
+
+            if (blocksData.error) {
+                showAlert('alert', 'Erro ao carregar blocos: ' + blocksData.error.message, 'error');
+            } else {
+                blocks = blocksData.data || [];
+            }
+
+            if (lessonsData.error) {
+                showAlert('alert', 'Erro ao carregar aulas: ' + lessonsData.error.message, 'error');
+            } else {
+                lessons = lessonsData.data || [];
+            }
+
+            if (exercisesData.error) {
+                showAlert('alert', 'Erro ao carregar exercícios: ' + exercisesData.error.message, 'error');
+            } else {
+                exercises = exercisesData.data || [];
+            }
+
+            renderContent();
+        }
+
+        // Renderizar conteúdo
+        function renderContent() {
+            const content = document.getElementById('content');
+            if (!content) return;
+
+            if (currentTab === 'lessons') {
+                renderLessons();
+            } else if (currentTab === 'exercises') {
+                renderExercises();
+            } else {
+                renderBlocks();
+            }
+        }
+
+        // Renderizar blocos
+        function renderBlocks() {
+            const content = document.getElementById('content');
+            
+            let html = `
+                <div style="margin-bottom: 24px;">
+                    <button class="add-button" onclick="openAddBlockModal()">
+                        ➕ Adicionar Bloco
+                    </button>
+                </div>
+            `;
+
+            if (blocks.length === 0) {
+                html += `<div class="empty-state">Nenhum bloco cadastrado</div>`;
+            } else {
+                blocks.forEach(block => {
+                    const blockLessons = lessons.filter(l => l.block_id === block.id);
+                    html += `
+                        <div class="block-card">
+                            <div class="block-header">
+                                <div class="block-info">
+                                    <h2>${block.title}</h2>
+                                    <p class="block-meta">
+                                        ${blockLessons.length} aulas • 
+                                        <span class="badge badge-${block.is_active ? 'active' : 'inactive'}">
+                                            ${block.is_active ? 'Ativo' : 'Inativo'}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="block-actions">
+                                    <button class="btn-secondary btn-small" onclick="editBlock('${block.id}')">
+                                        ✏️ Editar
+                                    </button>
+                                    <button class="btn-secondary btn-small" onclick="toggleBlockStatus('${block.id}', ${!block.is_active})">
+                                        ${block.is_active ? '🚫' : '✅'} ${block.is_active ? 'Desativar' : 'Ativar'}
+                                    </button>
+                                </div>
+                            </div>
+                            <p style="color: #9CA3AF; margin-bottom: 16px;">${block.description || ''}</p>
+                        </div>
+                    `;
+                });
+            }
+
+            content.innerHTML = html;
+        }
+
+        // Renderizar aulas
+        function renderLessons() {
+            const content = document.getElementById('content');
+            
+            let html = `
+                <div style="margin-bottom: 24px;">
+                    <button class="add-button" onclick="openAddLessonModal()">
+                        ➕ Adicionar Aula
+                    </button>
+                </div>
+            `;
+
+            blocks.forEach(block => {
+                const blockLessons = lessons.filter(l => l.block_id === block.id);
+                
+                html += `
+                    <div class="block-card">
+                        <div class="block-header">
+                            <div class="block-info">
+                                <h2>${block.title}</h2>
+                                <p class="block-meta">${blockLessons.length} aulas neste bloco</p>
+                            </div>
+                        </div>
+                        <div class="lessons-list">
+                `;
+
+                if (blockLessons.length === 0) {
+                    html += `<p style="color: #6B7280; text-align: center; padding: 20px;">Nenhuma aula neste bloco</p>`;
+                } else {
+                    blockLessons.forEach(lesson => {
+                        html += `
+                            <div class="lesson-card ${!lesson.is_active ? 'inactive' : ''}">
+                                <div style="display: flex; align-items: flex-start; flex: 1;">
+                                    <span class="lesson-order">${lesson.lesson_order}</span>
+                                    <div class="lesson-info">
+                                        <h3 class="lesson-title">${lesson.title}</h3>
+                                        <p class="lesson-subtitle">${lesson.subtitle || ''}</p>
+                                        <div class="lesson-meta">
+                                            <span>🎬 ${lesson.youtube_id}</span>
+                                            <span>⏱️ ${lesson.duration}</span>
+                                            ${lesson.has_exercises ? '<span class="badge badge-exercises">Exercícios</span>' : ''}
+                                            <span class="badge badge-${lesson.is_active ? 'active' : 'inactive'}">
+                                                ${lesson.is_active ? 'Ativa' : 'Inativa'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="lesson-actions">
+                                    <button class="btn-secondary btn-small" onclick="editLesson('${lesson.id}')">
+                                        ✏️ Editar
+                                    </button>
+                                    <button class="btn-secondary btn-small" onclick="toggleLessonStatus('${lesson.id}', ${!lesson.is_active})">
+                                        ${lesson.is_active ? '🚫' : '✅'}
+                                    </button>
+                                    <button class="btn-danger btn-small" onclick="deleteLesson('${lesson.id}')">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+        }
+
+        // Abrir modal para adicionar bloco
+        function openAddBlockModal() {
+            const maxOrder = blocks.length > 0 ? Math.max(...blocks.map(b => b.block_order)) : 0;
+            
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Bloco';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="saveBlock(event, null)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ordem *</label>
+                            <input type="number" name="block_order" value="${maxOrder + 1}" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo *</label>
+                            <input type="text" name="block_type" required placeholder="intro, identification, etc">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea name="description"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ícone</label>
+                            <input type="text" name="icon_name" placeholder="play-circle">
+                        </div>
+                        <div class="form-group">
+                            <label>Cor</label>
+                            <input type="text" name="color" value="#F59E0B">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="requires_previous_block"> 
+                            Requer bloco anterior completo
+                        </label>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Bloco</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Editar bloco
+        async function editBlock(blockId) {
+            const block = blocks.find(b => b.id === blockId);
+            if (!block) return;
+
+            document.getElementById('modalTitle').textContent = 'Editar Bloco';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="saveBlock(event, '${blockId}')">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ordem *</label>
+                            <input type="number" name="block_order" value="${block.block_order}" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Tipo *</label>
+                            <input type="text" name="block_type" value="${block.block_type}" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="title" value="${escapeHtml(block.title)}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Descrição</label>
+                        <textarea name="description">${escapeHtml(block.description || '')}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Ícone</label>
+                            <input type="text" name="icon_name" value="${block.icon_name || ''}" placeholder="play-circle">
+                        </div>
+                        <div class="form-group">
+                            <label>Cor</label>
+                            <input type="text" name="color" value="${block.color}">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="requires_previous_block" ${block.requires_previous_block ? 'checked' : ''}> 
+                            Requer bloco anterior completo
+                        </label>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Alterações</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Salvar bloco
+        async function saveBlock(e, blockId) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const data = {
+                block_order: parseInt(formData.get('block_order')),
+                block_type: formData.get('block_type'),
+                title: formData.get('title'),
+                description: formData.get('description') || null,
+                icon_name: formData.get('icon_name') || null,
+                color: formData.get('color'),
+                requires_previous_block: formData.get('requires_previous_block') === 'on',
+            };
+
+            console.log('🔍 Salvando bloco:', { blockId, data });
+            showLoading();
+
+            let result;
+            if (blockId) {
+                result = await supabase.from('video_lesson_blocks').update(data).eq('id', blockId).select();
+            } else {
+                result = await supabase.from('video_lesson_blocks').insert(data).select();
+            }
+
+            console.log('📦 Resposta Supabase (bloco):', result);
+            hideLoading();
+
+            if (result.error) {
+                console.error('❌ Erro ao salvar bloco:', result.error);
+                showAlert('alert', 'Erro ao salvar: ' + result.error.message, 'error');
+                return;
+            }
+
+            if (result.data && result.data.length === 0 && blockId) {
+                console.warn('⚠️ RLS pode estar bloqueando a atualização do bloco!');
+                showAlert('alert', '⚠️ Salvo localmente, mas RLS pode estar bloqueando no banco. Verifique o console!', 'error');
+                return;
+            }
+
+            console.log('✅ Bloco salvo com sucesso!');
+            showAlert('alert', `Bloco ${blockId ? 'atualizado' : 'criado'} com sucesso! ✅`, 'success');
+            closeModal();
+            loadData();
+        }
+
+        // Toggle status do bloco
+        async function toggleBlockStatus(blockId, newStatus) {
+            showLoading();
+            const { error } = await supabase
+                .from('video_lesson_blocks')
+                .update({ is_active: newStatus })
+                .eq('id', blockId);
+            hideLoading();
+
+            if (error) {
+                showAlert('alert', 'Erro ao atualizar status: ' + error.message, 'error');
+            } else {
+                showAlert('alert', 'Status atualizado! ✅', 'success');
+                loadData();
+            }
+        }
+
+        // Abrir modal para adicionar aula
+        function openAddLessonModal() {
+            if (blocks.length === 0) {
+                showAlert('alert', 'Crie um bloco primeiro!', 'error');
+                return;
+            }
+
+            document.getElementById('modalTitle').textContent = 'Adicionar Nova Aula';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="saveLesson(event, null)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bloco *</label>
+                            <select name="block_id" required onchange="updateLessonOrder(this.value)">
+                                <option value="">Selecione um bloco</option>
+                                ${blocks.map(b => `<option value="${b.id}">${b.title}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ordem *</label>
+                            <input type="number" name="lesson_order" id="lessonOrderInput" required min="1" value="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Subtítulo</label>
+                        <input type="text" name="subtitle">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrição *</label>
+                        <textarea name="description" required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>YouTube ID * <small>(copie do URL do vídeo)</small></label>
+                            <input type="text" name="youtube_id" required placeholder="dQw4w9WgXcQ" onchange="updatePreview(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Duração *</label>
+                            <input type="text" name="duration" required placeholder="5 min">
+                        </div>
+                    </div>
+
+                    <div id="youtubePreview"></div>
+
+                    <div class="form-group">
+                        <label>Cor</label>
+                        <input type="text" name="color" id="colorInput" value="#8B5CF6">
+                        <div class="color-picker">
+                            ${COLORS.map(c => `
+                                <div class="color-option" style="background: ${c}" onclick="selectColor('${c}')"></div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="has_exercises"> 
+                            Possui exercícios
+                        </label>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Aula</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Atualizar ordem da aula
+        function updateLessonOrder(blockId) {
+            const blockLessons = lessons.filter(l => l.block_id === blockId);
+            const maxOrder = blockLessons.length > 0 ? Math.max(...blockLessons.map(l => l.lesson_order)) : 0;
+            document.getElementById('lessonOrderInput').value = maxOrder + 1;
+        }
+
+        // Atualizar preview do YouTube
+        function updatePreview(youtubeId) {
+            if (youtubeId) {
+                document.getElementById('youtubePreview').innerHTML = `
+                    <iframe 
+                        class="youtube-preview" 
+                        src="https://www.youtube.com/embed/${youtubeId}" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                `;
+            }
+        }
+
+        // Selecionar cor
+        function selectColor(color) {
+            document.getElementById('colorInput').value = color;
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        // Editar aula
+        async function editLesson(lessonId) {
+            const lesson = lessons.find(l => l.id === lessonId);
+            if (!lesson) return;
+
+            document.getElementById('modalTitle').textContent = 'Editar Aula';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="saveLesson(event, '${lessonId}')">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Bloco *</label>
+                            <select name="block_id" required>
+                                ${blocks.map(b => `
+                                    <option value="${b.id}" ${b.id === lesson.block_id ? 'selected' : ''}>
+                                        ${b.title}
+                                    </option>
+                                `).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Ordem *</label>
+                            <input type="number" name="lesson_order" value="${lesson.lesson_order}" required min="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="title" value="${escapeHtml(lesson.title)}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Subtítulo</label>
+                        <input type="text" name="subtitle" value="${escapeHtml(lesson.subtitle || '')}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrição *</label>
+                        <textarea name="description" required>${escapeHtml(lesson.description)}</textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>YouTube ID *</label>
+                            <input type="text" name="youtube_id" value="${lesson.youtube_id}" required onchange="updatePreview(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Duração *</label>
+                            <input type="text" name="duration" value="${lesson.duration}" required>
+                        </div>
+                    </div>
+
+                    <div id="youtubePreview">
+                        <iframe 
+                            class="youtube-preview" 
+                            src="https://www.youtube.com/embed/${lesson.youtube_id}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cor</label>
+                        <input type="text" name="color" id="colorInput" value="${lesson.color}">
+                        <div class="color-picker">
+                            ${COLORS.map(c => `
+                                <div class="color-option ${c === lesson.color ? 'selected' : ''}" 
+                                     style="background: ${c}" 
+                                     onclick="selectColor('${c}')">
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="has_exercises" ${lesson.has_exercises ? 'checked' : ''}> 
+                            Possui exercícios
+                        </label>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Alterações</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Salvar aula
+        async function saveLesson(e, lessonId) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const data = {
+                block_id: formData.get('block_id'),
+                lesson_order: parseInt(formData.get('lesson_order')),
+                title: formData.get('title'),
+                subtitle: formData.get('subtitle') || null,
+                description: formData.get('description'),
+                youtube_id: formData.get('youtube_id'),
+                duration: formData.get('duration'),
+                color: formData.get('color'),
+                has_exercises: formData.get('has_exercises') === 'on',
+            };
+
+            console.log('🔍 Salvando aula:', { lessonId, data });
+            showLoading();
+
+            let result;
+            if (lessonId) {
+                result = await supabase.from('video_lessons').update(data).eq('id', lessonId).select();
+            } else {
+                result = await supabase.from('video_lessons').insert(data).select();
+            }
+
+            console.log('🎬 Resposta Supabase (aula):', result);
+            hideLoading();
+
+            if (result.error) {
+                console.error('❌ Erro ao salvar aula:', result.error);
+                showAlert('alert', 'Erro ao salvar: ' + result.error.message, 'error');
+                return;
+            }
+
+            if (result.data && result.data.length === 0 && lessonId) {
+                console.warn('⚠️ RLS pode estar bloqueando a atualização da aula!');
+                showAlert('alert', '⚠️ Salvo localmente, mas RLS pode estar bloqueando no banco. Verifique o console!', 'error');
+                return;
+            }
+
+            console.log('✅ Aula salva com sucesso!');
+            showAlert('alert', `Aula ${lessonId ? 'atualizada' : 'criada'} com sucesso! ✅`, 'success');
+            closeModal();
+            loadData();
+        }
+
+        // Toggle status da aula
+        async function toggleLessonStatus(lessonId, newStatus) {
+            showLoading();
+            const { error } = await supabase
+                .from('video_lessons')
+                .update({ is_active: newStatus })
+                .eq('id', lessonId);
+            hideLoading();
+
+            if (error) {
+                showAlert('alert', 'Erro ao atualizar status: ' + error.message, 'error');
+            } else {
+                showAlert('alert', 'Status atualizado! ✅', 'success');
+                loadData();
+            }
+        }
+
+        // Renderizar exercícios
+        function renderExercises() {
+            const content = document.getElementById('content');
+            
+            let html = `
+                <div style="margin-bottom: 24px;">
+                    <button class="add-button" onclick="openAddExerciseModal()">
+                        ➕ Adicionar Exercício
+                    </button>
+                </div>
+            `;
+
+            blocks.forEach(block => {
+                const blockLessons = lessons.filter(l => l.block_id === block.id && l.has_exercises);
+                
+                if (blockLessons.length === 0) return;
+
+                html += `
+                    <div class="block-card">
+                        <div class="block-header">
+                            <div class="block-info">
+                                <h2>${block.title}</h2>
+                                <p class="block-meta">${blockLessons.length} aulas com exercícios neste bloco</p>
+                            </div>
+                        </div>
+                        <div class="lessons-list">
+                `;
+
+                blockLessons.forEach(lesson => {
+                    const exercise = exercises.find(e => e.lesson_id === lesson.id);
+                    
+                    html += `
+                        <div class="lesson-card">
+                            <div style="display: flex; align-items: flex-start; flex: 1;">
+                                <span class="lesson-order">${lesson.lesson_order}</span>
+                                <div class="lesson-info">
+                                    <h3 class="lesson-title">${lesson.title}</h3>
+                                    ${exercise ? `
+                                        <p class="lesson-subtitle" style="margin-top: 12px;"><strong>Exercício:</strong> ${exercise.exercise_title || exercise.title}</p>
+                                        <div class="lesson-meta">
+                                            <span>📝 ${exercise.instructions ? exercise.instructions.substring(0, 60) + '...' : 'Sem instruções'}</span>
+                                        </div>
+                                    ` : `
+                                        <p class="lesson-subtitle" style="color: #EF4444; margin-top: 12px;">⚠️ Exercício não cadastrado</p>
+                                    `}
+                                </div>
+                            </div>
+                            <div class="lesson-actions">
+                                ${exercise ? `
+                                    <button class="btn-secondary btn-small" onclick="editExercise('${exercise.id}')">
+                                        ✏️ Editar
+                                    </button>
+                                    <button class="btn-danger btn-small" onclick="deleteExercise('${exercise.id}')">
+                                        🗑️
+                                    </button>
+                                ` : `
+                                    <button class="add-button btn-small" onclick="openAddExerciseModal('${lesson.id}')">
+                                        ➕ Criar Exercício
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (exercises.length === 0 && lessons.filter(l => l.has_exercises).length === 0) {
+                html += `<div class="empty-state">Nenhum exercício cadastrado. Marque as aulas com "Possui exercícios" para criar exercícios.</div>`;
+            }
+
+            content.innerHTML = html;
+        }
+
+        // Abrir modal para adicionar exercício
+        function openAddExerciseModal(preselectedLessonId = null) {
+            const lessonsWithExercises = lessons.filter(l => l.has_exercises);
+            
+            if (lessonsWithExercises.length === 0) {
+                showAlert('alert', 'Nenhuma aula marcada com "Possui exercícios". Edite as aulas primeiro!', 'error');
+                return;
+            }
+
+            document.getElementById('modalTitle').textContent = 'Adicionar Novo Exercício';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="saveExercise(event, null)">
+                    <div class="form-group">
+                        <label>Aula * <small>(apenas aulas marcadas com "Possui exercícios")</small></label>
+                        <select name="lesson_id" required>
+                            <option value="">Selecione uma aula</option>
+                            ${lessonsWithExercises.map(lesson => {
+                                const block = blocks.find(b => b.id === lesson.block_id);
+                                const hasExercise = exercises.find(e => e.lesson_id === lesson.id);
+                                return `<option value="${lesson.id}" 
+                                    ${preselectedLessonId === lesson.id ? 'selected' : ''}
+                                    ${hasExercise ? 'disabled' : ''}>
+                                    ${block?.title || 'Bloco'} - Aula ${lesson.lesson_order}: ${lesson.title}
+                                    ${hasExercise ? ' (já possui exercício)' : ''}
+                                </option>`;
+                            }).join('')}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="title" required placeholder="Ex: Exercício de Reflexão">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Introdução *</label>
+                        <textarea name="introduction" required rows="3" placeholder="Texto introdutório do exercício..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Título do Exercício *</label>
+                        <input type="text" name="exercise_title" required placeholder="Ex: Refletindo sobre suas emoções">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Instruções *</label>
+                        <textarea name="instructions" required rows="4" placeholder="Instruções detalhadas para realizar o exercício..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nota <small>(opcional)</small></label>
+                        <textarea name="note" rows="2" placeholder="Observações adicionais sobre o exercício..."></textarea>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Exercício</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Editar exercício
+        async function editExercise(exerciseId) {
+            const exercise = exercises.find(e => e.id === exerciseId);
+            if (!exercise) return;
+
+            const lesson = lessons.find(l => l.id === exercise.lesson_id);
+            const block = blocks.find(b => b.id === lesson?.block_id);
+
+            document.getElementById('modalTitle').textContent = 'Editar Exercício';
+            document.getElementById('modalBody').innerHTML = `
+                <form onsubmit="saveExercise(event, '${exerciseId}')">
+                    <div class="form-group">
+                        <label>Aula *</label>
+                        <input type="text" value="${block?.title || 'Bloco'} - Aula ${lesson?.lesson_order}: ${lesson?.title}" disabled style="background: #1F2937; opacity: 0.7;">
+                        <input type="hidden" name="lesson_id" value="${exercise.lesson_id}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Título *</label>
+                        <input type="text" name="title" value="${escapeHtml(exercise.title)}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Introdução *</label>
+                        <textarea name="introduction" required rows="3">${escapeHtml(exercise.introduction)}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Título do Exercício *</label>
+                        <input type="text" name="exercise_title" value="${escapeHtml(exercise.exercise_title)}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Instruções *</label>
+                        <textarea name="instructions" required rows="4">${escapeHtml(exercise.instructions)}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nota <small>(opcional)</small></label>
+                        <textarea name="note" rows="2">${escapeHtml(exercise.note || '')}</textarea>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">Salvar Alterações</button>
+                    </div>
+                </form>
+            `;
+            document.getElementById('modal').classList.add('active');
+        }
+
+        // Salvar exercício
+        async function saveExercise(e, exerciseId) {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const data = {
+                lesson_id: formData.get('lesson_id'),
+                title: formData.get('title'),
+                introduction: formData.get('introduction'),
+                exercise_title: formData.get('exercise_title'),
+                instructions: formData.get('instructions'),
+                note: formData.get('note') || null,
+            };
+
+            console.log('🔍 Salvando exercício:', { exerciseId, data });
+            showLoading();
+
+            let result;
+            if (exerciseId) {
+                result = await supabase.from('video_lesson_exercises').update(data).eq('id', exerciseId).select();
+            } else {
+                result = await supabase.from('video_lesson_exercises').insert(data).select();
+            }
+
+            console.log('📝 Resposta Supabase (exercício):', result);
+            hideLoading();
+
+            if (result.error) {
+                console.error('❌ Erro ao salvar exercício:', result.error);
+                showAlert('alert', 'Erro ao salvar: ' + result.error.message, 'error');
+                return;
+            }
+
+            if (result.data && result.data.length === 0 && exerciseId) {
+                console.warn('⚠️ RLS pode estar bloqueando a atualização do exercício!');
+                showAlert('alert', '⚠️ Salvo localmente, mas RLS pode estar bloqueando no banco. Verifique o console!', 'error');
+                return;
+            }
+
+            console.log('✅ Exercício salvo com sucesso!');
+            showAlert('alert', `Exercício ${exerciseId ? 'atualizado' : 'criado'} com sucesso! ✅`, 'success');
+            closeModal();
+            loadData();
+        }
+
+        // Deletar exercício
+        async function deleteExercise(exerciseId) {
+            if (!confirm('Tem certeza que deseja deletar este exercício? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            showLoading();
+            const { error } = await supabase.from('video_lesson_exercises').delete().eq('id', exerciseId);
+            hideLoading();
+
+            if (error) {
+                showAlert('alert', 'Erro ao deletar: ' + error.message, 'error');
+            } else {
+                showAlert('alert', 'Exercício deletado! ✅', 'success');
+                loadData();
+            }
+        }
+
+        // Deletar aula
+        async function deleteLesson(lessonId) {
+            if (!confirm('Tem certeza que deseja deletar esta aula? Esta ação não pode ser desfeita.')) {
+                return;
+            }
+
+            showLoading();
+            const { error } = await supabase.from('video_lessons').delete().eq('id', lessonId);
+            hideLoading();
+
+            if (error) {
+                showAlert('alert', 'Erro ao deletar: ' + error.message, 'error');
+            } else {
+                showAlert('alert', 'Aula deletada! ✅', 'success');
+                loadData();
+            }
+        }
+
+        // Utilities
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function showLoading() {
+            document.getElementById('loadingOverlay').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+
+        function showAlert(containerId, message, type) {
+            const container = document.getElementById(containerId);
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            container.innerHTML = `<div class="alert alert-${type}">${icon} ${message}</div>`;
+            setTimeout(() => container.innerHTML = '', 5000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // Iniciar app
+        init();
+    </script>
+</body>
+</html>
